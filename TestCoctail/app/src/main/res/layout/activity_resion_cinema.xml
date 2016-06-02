@@ -135,6 +135,17 @@
 
     </com.ssomai.android.scalablelayout.ScalableLayout>
 
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:src="@android:drawable/ic_dialog_email"
+        android:layout_marginEnd="15dp"
+        android:layout_below="@+id/toolbar"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="15dp" />
+
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/toolbar"

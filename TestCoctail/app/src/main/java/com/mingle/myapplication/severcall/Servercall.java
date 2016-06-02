@@ -16,9 +16,8 @@ import cz.msebera.android.httpclient.Header;
 public class Servercall extends AppCompatActivity {
     Gson gson;
     Result result;
-
     AsyncHttpClient client = new AsyncHttpClient();
-    private static final String server_url = "http://223.194.129.160:8080/cocktail";
+    private static final String server_url = "http://113.198.84.107:8080/cocktail";
     Context context;
 
     public void postResioninfo(Context context, String id){
@@ -27,12 +26,10 @@ public class Servercall extends AppCompatActivity {
         client.post(context, server_url + "/app/incUseCount", params, new TextHttpResponseHandler() {
             @Override
             public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
-                Log.d("resion","fail");
-                Log.d("resion","fail "+statusCode);
+                Log.d("resion", "fail " + statusCode);
             }
             @Override
             public void onSuccess(int statusCode, Header[] headers, String responseString) {
-                Log.d("resion","success1");
                 Log.d("resion","success2 "+responseString );
             }
         });
@@ -43,15 +40,18 @@ public class Servercall extends AppCompatActivity {
         client.post(context, server_url + "/sectorTest", params, new TextHttpResponseHandler() {
             @Override
             public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
-                Log.d("fail", "custom " + statusCode);
+                Log.d("NDG fail", "custom " + statusCode);
+                Log.d("NDG first fail", ""+ SharedPreferenceUtil.getSharedPreference(context, "FirstIn"));
 
-                SharedPreferenceUtil.putSharedPreference(context,"CinemaBrightness", 50); //시네마 밝기 값 일단 디폴트값으로 조정.
-                SharedPreferenceUtil.putSharedPreference(context,"CinemaRingerMode", 1); //시네마 모드 값을 디폴트로 조정.
-                SharedPreferenceUtil.putSharedPreference(context, "CinemaChecked", 1);
+                if(SharedPreferenceUtil.getSharedPreference(context, "FirstIn") == 0) { //최초 앱 실행
+                    SharedPreferenceUtil.putSharedPreference(context, "CinemaBrightness", 50); //시네마 밝기 값 일단 디폴트값으로 조정.
+                    SharedPreferenceUtil.putSharedPreference(context, "CinemaRingerMode", 1); //시네마 모드 값을 디폴트로 조정.
+                    SharedPreferenceUtil.putSharedPreference(context, "CinemaChecked", 1);
 
-                SharedPreferenceUtil.putSharedPreference(context,"ExhibitionBrightness", 155);
-                SharedPreferenceUtil.putSharedPreference(context, "ExhibitionRingerMode", 1);
-                SharedPreferenceUtil.putSharedPreference(context, "ExhibitionPopup", 1);
+                    SharedPreferenceUtil.putSharedPreference(context, "ExhibitionBrightness", 155);
+                    SharedPreferenceUtil.putSharedPreference(context, "ExhibitionRingerMode", 1);
+                    SharedPreferenceUtil.putSharedPreference(context, "ExhibitionPopup", 1);
+                }
 
 
             }
@@ -77,33 +77,44 @@ public class Servercall extends AppCompatActivity {
                     Log.d("NDG", "" + p.brightness);
                     Log.d("NDG ", "" + p.callId);
                     Log.d("NDG ", "" + p.modeId);
-
+                    Log.d("NDG first success", ""+ SharedPreferenceUtil.getSharedPreference(context, "FirstIn"));
                     if (p.sectorId.equals("cinema")) {
                         SharedPreferenceUtil.putSharedPreference(context, "CinemaDefaultBrightness",p.brightness); //디폴트값
                         SharedPreferenceUtil.putSharedPreference(context, "CinemaDefaultModeId",p.modeId);
                         SharedPreferenceUtil.putSharedPreference(context, "CinemaDefaultCallId",p.callId);
 
-                        SharedPreferenceUtil.putSharedPreference(context, "CinemaBrightness",p.brightness); //시네마 밝기 값 일단 디폴트값으로 조정.
-                        SharedPreferenceUtil.putSharedPreference(context, "CinemaRingerMode",p.modeId); //시네마 모드 값을 디폴트로 조정.
-                        SharedPreferenceUtil.putSharedPreference(context, "CinemaChecked", p.callId);
+                        if(SharedPreferenceUtil.getSharedPreference(context, "FirstIn") == 0) { //최초 앱 실행
+                            SharedPreferenceUtil.putSharedPreference(context, "CinemaBrightness", p.brightness); //시네마 밝기 값 일단 디폴트값으로 조정.
+                            SharedPreferenceUtil.putSharedPreference(context, "CinemaRingerMode", p.modeId); //시네마 모드 값을 디폴트로 조정.
+                            SharedPreferenceUtil.putSharedPreference(context, "CinemaChecked", p.callId);
+                        }
                         //put
                     } else if (p.sectorId.equals("exhibition")) {
                         SharedPreferenceUtil.putSharedPreference(context, "ExhibitionDefaultBrightness",p.brightness);
                         SharedPreferenceUtil.putSharedPreference(context, "ExhibitionDefaultModeId",p.modeId);
                         SharedPreferenceUtil.putSharedPreference(context, "ExhibitionDefaultCallId",p.callId);
 
-                        SharedPreferenceUtil.putSharedPreference(context, "ExhibitionBrightness",p.brightness);
-                        SharedPreferenceUtil.putSharedPreference(context, "ExhibitionRingerMode",p.modeId);
-                        SharedPreferenceUtil.putSharedPreference(context, "ExhibitionPopup", p.callId);
+                        if(SharedPreferenceUtil.getSharedPreference(context, "FirstIn") == 0) { //최초 앱 실행
+                            SharedPreferenceUtil.putSharedPreference(context, "ExhibitionBrightness", p.brightness);
+                            SharedPreferenceUtil.putSharedPreference(context, "ExhibitionRingerMode", p.modeId);
+                            SharedPreferenceUtil.putSharedPreference(context, "ExhibitionPopup", p.callId);
+                        }
                     } else if (p.sectorId.equals("library")){
                         SharedPreferenceUtil.putSharedPreference(context, "LibraryDefaultBrightness",p.brightness);
                         SharedPreferenceUtil.putSharedPreference(context, "LibraryDefaultCallId",p.callId);
                         SharedPreferenceUtil.putSharedPreference(context, "LibraryDefaultModeId",p.modeId);
+
+                        if(SharedPreferenceUtil.getSharedPreference(context, "FirstIn") == 0) { //최초 앱 실행
+                            SharedPreferenceUtil.putSharedPreference(context, "LibraryBrightness", p.brightness);
+                            SharedPreferenceUtil.putSharedPreference(context, "LibraryRingerMode", p.modeId);
+                            SharedPreferenceUtil.putSharedPreference(context, "LibraryPopup", p.callId);
+                        }
                         // put
                     } else {
                         Log.d("customizeset", "Resion not yet");
                     }
                 }
+                SharedPreferenceUtil.putSharedPreference(context, "FirstIn", 1);
             }
         });
     }
@@ -131,6 +142,26 @@ public class Servercall extends AppCompatActivity {
             public void onSuccess(int statusCode, Header[] headers, String responseString) {
                 Log.d("setting", "success");
                 Log.d("setting", "success " + statusCode);
+            }
+        });
+    }
+
+    public void sendMessagetoServer(Context context,String id,String txt, String sectorId){
+        RequestParams params=new RequestParams();
+        params.put("userId", id);
+        params.put("context", txt);
+        params.put("sectorId", sectorId);
+        client.post(context, server_url + "/app/insertRequirement", params, new TextHttpResponseHandler() {
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+                Log.d("sendmessage","fail "+statusCode);
+            }
+
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, String responseString) {
+                Log.d("sendmessage","success "+statusCode);
+
             }
         });
     }

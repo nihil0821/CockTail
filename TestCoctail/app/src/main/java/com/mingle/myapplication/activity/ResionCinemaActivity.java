@@ -1,7 +1,10 @@
 package com.mingle.myapplication.activity;
 
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -28,6 +31,8 @@ import android.widget.SeekBar;
 import android.widget.Switch;
 import android.widget.ToggleButton;
 
+import com.bumptech.glide.Glide;
+import com.mingle.myapplication.MessageDialog;
 import com.mingle.myapplication.R;
 import com.mingle.myapplication.TriToggleButton;
 import com.mingle.myapplication.model.SharedPreferenceUtil;
@@ -41,6 +46,7 @@ public class ResionCinemaActivity extends AppCompatActivity {
 
     private SweetSheet mSweetSheet3;
     private RelativeLayout rl;
+    private AlertDialog mDialog = null;
 
     Toolbar toolbar;
     Toolbar bottombar;
@@ -68,7 +74,9 @@ public class ResionCinemaActivity extends AppCompatActivity {
     SeekBar ringSeekBar;            //벨 소리 조절
     SeekBar mediaSeekBar;           //미디어 소리 조절
     SeekBar alertSeekBar;           //알람 소리 조절
-    SeekBar sysSeekBar;             //시스템 소리 조절
+
+    TriToggleButton ringerMode;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -186,8 +194,18 @@ public class ResionCinemaActivity extends AppCompatActivity {
                 SharedPreferenceUtil.getSharedPreference(getApplicationContext(), "CinemaChecked")
         );
 
-        SharedPreferenceUtil.putSharedPreference(getApplicationContext(), "CallServiceFrag", 1);
+        SharedPreferenceUtil.putSharedPreference(getApplicationContext(), "CallServiceFrag", 0);
         mCallService = startService(new Intent(this, CallService.class));
+
+        android.support.design.widget.FloatingActionButton fab = (android.support.design.widget.FloatingActionButton) findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                messageDialog();
+            }
+        });
+
+        initDialog();
     }
 
     protected void onNewIntent(Intent intent) {
@@ -215,7 +233,47 @@ public class ResionCinemaActivity extends AppCompatActivity {
         bitmap.recycle();
         bitmap2.recycle();
         bitmap3.recycle();
-        SharedPreferenceUtil.putSharedPreference(getApplicationContext(), "CallServiceFrag", 0); // 다른 지역에서 callservice 사용 안함
+        SharedPreferenceUtil.putSharedPreference(getApplicationContext(), "CallServiceFrag", 1); // 다른 지역에서 callservice 사용 안함
+    }
+
+    public void initDialog() {
+        //final Handler handler = new Handler();
+        LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        final View dialogView = inflater.inflate(R.layout.dialog_layout, null);
+
+        AlertDialog.Builder ab = new AlertDialog.Builder(this);
+        ab.setTitle("영화관 인기 상영작");
+        ab.setCancelable(false);
+        ab.setView(dialogView);
+
+        ImageView imageView = (ImageView)dialogView.findViewById(R.id.webImage);
+        Glide.with(this).load("http://img.cgv.co.kr/Movie/Thumbnail/Poster/000078/78940/78940_1000.jpg").into(imageView);
+
+        ab.setPositiveButton("확인", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface arg0, int arg1) {
+                setDismiss(mDialog);
+            }
+        });
+        ab.setNegativeButton("취소", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface arg0, int arg1) {
+                setDismiss(mDialog);
+            }
+        });
+        ab.show();
+    }
+
+    private void setDismiss(Dialog dialog) {
+        if (dialog != null && dialog.isShowing())
+            dialog.dismiss();
+    }
+
+    public void messageDialog() {
+        MessageDialog messgeDialog = new MessageDialog();
+        messgeDialog.show(getFragmentManager(), "UserContext");
+        SharedPreferenceUtil.putSharedPreference(getApplicationContext(), "SectorId", cinema);
+        messgeDialog.setCancelable(true);
     }
 
     private void setupCustomView() {
@@ -273,14 +331,17 @@ public class ResionCinemaActivity extends AppCompatActivity {
                 Log.d("SharedPreferenceUtil 3", "Resion Cinema: " + SharedPreferenceUtil.getSharedPreference(getApplicationContext(), "CinemaRingerMode"));
 
             }
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {}
 
             @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {}
+            public void onStartTrackingTouch(SeekBar seekBar) {
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+            }
         });
         seekBar.setProgress(
-                SharedPreferenceUtil.getSharedPreference(getApplicationContext(), "CinemaBrightness") * 100 / 255);
+                SharedPreferenceUtil.getSharedPreference(getApplicationContext(), "CinemaBrightness"));
         Log.d("SharedPreferenceUtil 2", "Resion Cinema: " + SharedPreferenceUtil.getSharedPreference(getApplicationContext(), "CinemaBrightness"));
         Log.d("SharedPreferenceUtil 2", "Resion Cinema: " + SharedPreferenceUtil.getSharedPreference(getApplicationContext(), "CinemaRingerMode"));
         callServiceSwitchBtn = (Switch) view.findViewById(R.id.switch1);
@@ -305,13 +366,16 @@ public class ResionCinemaActivity extends AppCompatActivity {
 
             }
         });
+        if(SharedPreferenceUtil.getSharedPreference(getApplicationContext(), "MessageChecked") == 0) messgeSwitchBtn.setChecked(true);
+        else messgeSwitchBtn.setChecked(false);
+
         messgeSwitchBtn.setOnCheckedChangeListener(new Switch.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
-                    SharedPreferenceUtil.putSharedPreference(getApplicationContext(), "MessageChecked", 1);
-                } else {
                     SharedPreferenceUtil.putSharedPreference(getApplicationContext(), "MessageChecked", 0);
+                } else {
+                    SharedPreferenceUtil.putSharedPreference(getApplicationContext(), "MessageChecked", 1);
                 }
             }
         });
@@ -330,7 +394,7 @@ public class ResionCinemaActivity extends AppCompatActivity {
 
         mediaSeekBar = (SeekBar) view.findViewById(R.id.mediaSeekBar);
         alertSeekBar = (SeekBar) view.findViewById(R.id.alertSeekBar);
-        sysSeekBar = (SeekBar) view.findViewById(R.id.sysSeekBar);
+
 
         final AudioManager audioManager3 = (AudioManager) getSystemService(AUDIO_SERVICE);
         int mMax = audioManager3.getStreamMaxVolume(AudioManager.STREAM_NOTIFICATION);
@@ -350,26 +414,6 @@ public class ResionCinemaActivity extends AppCompatActivity {
             public void onStopTrackingTouch(SeekBar seekBar) {}
 
         });
-
-        final AudioManager audioManager4 = (AudioManager) getSystemService(AUDIO_SERVICE);
-        mMax = audioManager4.getStreamMaxVolume(AudioManager.STREAM_SYSTEM);
-        mCurrentRing = audioManager4.getStreamVolume(AudioManager.STREAM_SYSTEM);
-        sysSeekBar.setMax(mMax);
-        sysSeekBar.setProgress(mCurrentRing);
-        sysSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                audioManager4.setStreamVolume(AudioManager.STREAM_SYSTEM, progress, 0);
-            }
-
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {}
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {}
-
-        });
-
 
         final AudioManager audioManager1 = (AudioManager) getSystemService(AUDIO_SERVICE);
         mMax = audioManager1.getStreamMaxVolume(AudioManager.STREAM_RING);
@@ -402,10 +446,34 @@ public class ResionCinemaActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {}
+            public void onStartTrackingTouch(SeekBar seekBar) {
+            }
 
             @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {}
+            public void onStopTrackingTouch(SeekBar seekBar) {
+            }
+        });
+
+        ringerMode = (TriToggleButton)view.findViewById(R.id.triToggleButton);
+        Button returnBtn = (Button)view.findViewById(R.id.returnBtn);
+        returnBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Settings.System.putInt(getContentResolver(), "screen_brightness",
+                        SharedPreferenceUtil.getSharedPreference(getApplicationContext(), "CinemaDefaultBrightness"));
+                audioManager.setRingerMode(
+                        SharedPreferenceUtil.getSharedPreference(getApplicationContext(), "CinemaDefaultModeId"));
+                seekBar.setProgress(SharedPreferenceUtil.getSharedPreference(getApplicationContext(), "CinemaDefaultBrightness"));
+                ringerMode.setButtonText2(SharedPreferenceUtil.getSharedPreference(getApplicationContext(), "CinemaDefaultModeId"));
+                if (SharedPreferenceUtil.getSharedPreference(getApplicationContext(), "CinemaDefaultCallId") == 1) {
+                    callServiceSwitchBtn.setChecked(true);
+                    SharedPreferenceUtil.putSharedPreference(getApplicationContext(), "CallServiceFrag", 0);
+                } else {
+                    callServiceSwitchBtn.setChecked(false);
+                    SharedPreferenceUtil.putSharedPreference(getApplicationContext(), "CallServiceFrag", 1);
+                }
+
+            }
         });
     }
 

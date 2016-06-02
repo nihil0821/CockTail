@@ -11,7 +11,8 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/toolbar"
         android:layout_above="@+id/bottombar"
-        android:id="@+id/mainListView"></ListView>
+        android:id="@+id/mainListView"
+        android:background="@color/black"></ListView>
 
 
     <android.support.v7.widget.Toolbar

@@ -8,7 +8,6 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.media.AudioManager;
-import android.media.Image;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.os.Handler;
@@ -16,20 +15,14 @@ import android.provider.Settings;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.text.Layout;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.webkit.WebView;
-import android.webkit.WebViewClient;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
@@ -40,21 +33,15 @@ import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import com.bumptech.glide.Glide;
+import com.mingle.myapplication.MessageDialog;
 import com.mingle.myapplication.R;
-import com.mingle.myapplication.ScalableLayout;
 import com.mingle.myapplication.TriToggleButton;
 import com.mingle.myapplication.model.SharedPreferenceUtil;
 import com.mingle.myapplication.severcall.Servercall;
 import com.mingle.sweetpick.BlurEffect;
 import com.mingle.sweetpick.CustomDelegate;
 import com.mingle.sweetpick.SweetSheet;
-import com.oguzdev.circularfloatingactionmenu.library.FloatingActionButton;
-import com.oguzdev.circularfloatingactionmenu.library.FloatingActionMenu;
-import com.oguzdev.circularfloatingactionmenu.library.SubActionButton;
 
-import java.io.InputStream;
-import java.net.URL;
-import java.util.zip.Inflater;
 
 public class ResionExhibitionActivity extends AppCompatActivity {
     private SweetSheet mSweetSheet3;
@@ -88,6 +75,8 @@ public class ResionExhibitionActivity extends AppCompatActivity {
     SeekBar mediaSeekBar;           //미디어 소리 조절
     SeekBar alertSeekBar;           //알람 소리 조절
     SeekBar sysSeekBar;
+
+    TriToggleButton ringerMode;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -211,18 +200,16 @@ public class ResionExhibitionActivity extends AppCompatActivity {
         Log.d("SharedPreferenceUtil 1", "Resion Exhibition: " + SharedPreferenceUtil.getSharedPreference(getApplicationContext(), "ExhibitionBrightness"));
         Log.d("SharedPreferenceUtil 1", "Resion Exhibition: " + SharedPreferenceUtil.getSharedPreference(getApplicationContext(), "ExhibitionRingerMode"));
 
-        SharedPreferenceUtil.putSharedPreference(getApplicationContext(), "CallServiceFrag", 0); // 다른 지역에서 callservice 사용 안함
+        SharedPreferenceUtil.putSharedPreference(getApplicationContext(), "CallServiceFrag", 1); // 다른 지역에서 callservice 사용 안함
 
-        //floating Button
-        ImageView icon = new ImageView(this);
-        icon.setImageDrawable(getResources().getDrawable(R.mipmap.ic_message, null));
-        FloatingActionButton actionButton = new FloatingActionButton.Builder(this).setContentView(icon).build();
+        android.support.design.widget.FloatingActionButton fab = (android.support.design.widget.FloatingActionButton) findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                messageDialog();
+            }
+        });
 
-        SubActionButton.Builder itemBuilder = new SubActionButton.Builder(this);
-        ImageView itemIcon = new ImageView(this);
-        itemIcon.setImageDrawable(getResources().getDrawable(R.mipmap.ic_message, null));
-        SubActionButton button1 = itemBuilder.setContentView(itemIcon).build();
-        FloatingActionMenu actionMenu = new FloatingActionMenu.Builder(this).attachTo(actionButton).build();
     }
 
     public void initDialog() {
@@ -236,7 +223,7 @@ public class ResionExhibitionActivity extends AppCompatActivity {
         ab.setView(dialogView);
 
         ImageView imageView = (ImageView)dialogView.findViewById(R.id.webImage);
-        Glide.with(this).load("https://goo.gl/QI7IDh").into(imageView);
+        Glide.with(this).load("https://goo.gl/U7k3Nt").into(imageView);
 
         ab.setPositiveButton("확인", new DialogInterface.OnClickListener() {
             @Override
@@ -251,6 +238,13 @@ public class ResionExhibitionActivity extends AppCompatActivity {
             }
         });
         ab.show();
+    }
+
+    public void messageDialog() {
+        MessageDialog messgeDialog = new MessageDialog();
+        messgeDialog.show(getFragmentManager(), "UserContext");
+        SharedPreferenceUtil.putSharedPreference(getApplicationContext(), "SectorId", exhibition);
+        messgeDialog.setCancelable(true);
     }
 
     private void setDismiss(Dialog dialog) {
@@ -281,9 +275,7 @@ public class ResionExhibitionActivity extends AppCompatActivity {
         mSweetSheet3 = new SweetSheet(rl);
         CustomDelegate customDelegate = new CustomDelegate(true,
                 CustomDelegate.AnimationType.AlphaAnimation);
-
         View view = LayoutInflater.from(this).inflate(R.layout.layout_customview_exh, null, false);
-
         customDelegate.setCustomView(view);
         customDelegate.setSweetSheetColor(getResources().getColor(R.color.colorBottomtab));
         mSweetSheet3.setDelegate(customDelegate);
@@ -346,10 +338,10 @@ public class ResionExhibitionActivity extends AppCompatActivity {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if(isChecked) {
-                    SharedPreferenceUtil.putSharedPreference(getApplicationContext(), "ExhibitionPopup", 0);
+                    SharedPreferenceUtil.putSharedPreference(getApplicationContext(), "ExhibitionPopup", 1);
                 }
                 else {
-                    SharedPreferenceUtil.putSharedPreference(getApplicationContext(), "ExhibitionPopup", 1);
+                    SharedPreferenceUtil.putSharedPreference(getApplicationContext(), "ExhibitionPopup", 0);
                 }
             }
         });
@@ -385,10 +377,14 @@ public class ResionExhibitionActivity extends AppCompatActivity {
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 audioManager3.setStreamVolume(AudioManager.STREAM_NOTIFICATION, progress, 0);
             }
+
             @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {}
+            public void onStartTrackingTouch(SeekBar seekBar) {
+            }
+
             @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {}
+            public void onStopTrackingTouch(SeekBar seekBar) {
+            }
         });
 
         final AudioManager audioManager4 = (AudioManager)getSystemService(AUDIO_SERVICE);
@@ -403,9 +399,12 @@ public class ResionExhibitionActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {}
+            public void onStartTrackingTouch(SeekBar seekBar) {
+            }
+
             @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {}
+            public void onStopTrackingTouch(SeekBar seekBar) {
+            }
         });
 
         final AudioManager audioManager1 = (AudioManager)getSystemService(AUDIO_SERVICE);
@@ -421,10 +420,12 @@ public class ResionExhibitionActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {}
+            public void onStartTrackingTouch(SeekBar seekBar) {
+            }
 
             @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {}
+            public void onStopTrackingTouch(SeekBar seekBar) {
+            }
         });
 
         final AudioManager audioManager2 = (AudioManager)getSystemService(AUDIO_SERVICE);
@@ -440,11 +441,28 @@ public class ResionExhibitionActivity extends AppCompatActivity {
 
             @Override
             public void onStartTrackingTouch(SeekBar seekBar) {
-
             }
 
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
+            }
+        });
+
+        ringerMode = (TriToggleButton)view.findViewById(R.id.triToggleButton);
+        Button returnBtn = (Button)view.findViewById(R.id.returnBtn);
+        returnBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Settings.System.putInt(getContentResolver(), "screen_brightness",
+                        SharedPreferenceUtil.getSharedPreference(getApplicationContext(), "ExhibitionDefaultBrightness"));
+                audioManager.setRingerMode(
+                        SharedPreferenceUtil.getSharedPreference(getApplicationContext(), "ExhibitionDefaultModeId"));
+                seekBar.setProgress(SharedPreferenceUtil.getSharedPreference(getApplicationContext(), "ExhibitionDefaultBrightness"));
+                ringerMode.setButtonText2(SharedPreferenceUtil.getSharedPreference(getApplicationContext(), "ExhibitionDefaultModeId"));
+                if(SharedPreferenceUtil.getSharedPreference(getApplicationContext(), "ExhibitionDefaultCallId")==1)
+                    popupSwitch.setChecked(true);
+                else
+                    popupSwitch.setChecked(false);
 
             }
         });

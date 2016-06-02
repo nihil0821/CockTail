@@ -67,7 +67,6 @@
             </intent-filter>
         </service>
         <service android:name="com.perples.recosdk.RECOBeaconService" />
-        <service android:name=".service.RECOBackgroundMonitoringService" />
         <service android:name=".service.RECOBackgroundRangingService"/>
 
 

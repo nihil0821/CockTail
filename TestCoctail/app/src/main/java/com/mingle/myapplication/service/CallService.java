@@ -34,19 +34,17 @@ public class CallService extends Service {
         tm.listen(new PhoneStateListener() {
             @Override
             public void onCallStateChanged(int state, String incomingNumber) {
-                if(SharedPreferenceUtil.getSharedPreference(getApplicationContext(), "CallServiceFrag")==1) {
-                    Toast.makeText(getApplicationContext(),
-                            "전화 차단 후 메시지 전송기능 사용", Toast.LENGTH_SHORT).show();
+                if(SharedPreferenceUtil.getSharedPreference(getApplicationContext(), "CallServiceFrag")==0) {
+                    //Toast.makeText(getApplicationContext(), "전화 차단 후 메시지 전송기능 사용", Toast.LENGTH_SHORT).show();
                     Log.d("DEBUG", "incomingNumber:" + incomingNumber);
                     switch (state) {
                         case TelephonyManager.CALL_STATE_IDLE: //전화가 끊긴 상태
                             if (call == true) {
                                 mAudioManager.setRingerMode(mAudioManager.RINGER_MODE_VIBRATE);
-                                if(SharedPreferenceUtil.getSharedPreference(getApplicationContext(), "MessageChecked")==1) {
+                                if(SharedPreferenceUtil.getSharedPreference(getApplicationContext(), "MessageChecked")==0) {
                                     SendSMS(incomingNumber, "죄송합니다. 지금 전화를 받을 수 없습니다.");
                                 }
-                                Toast.makeText(getApplicationContext(), "죄송합니다. 지금 전화를 받을 수 없습니다."
-                                        , Toast.LENGTH_SHORT).show();
+                                //Toast.makeText(getApplicationContext(), "죄송합니다. 지금 전화를 받을 수 없습니다.",Toast.LENGTH_SHORT).show();
                                 call = false;
                             }
                             break;
@@ -81,8 +79,7 @@ public class CallService extends Service {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        Toast.makeText(getApplicationContext(),
-                "전화 차단 후 메시지 전송기능 사용 안함", Toast.LENGTH_SHORT).show();
+        //Toast.makeText(getApplicationContext(), "전화 차단 후 메시지 전송기능 사용 안함", Toast.LENGTH_SHORT).show();
         SharedPreferenceUtil.putSharedPreference(getApplicationContext(), "CallServiceFrag", 0);
         Log.d("Service Destroy", "콜서비스 종료");
         stopSelf();

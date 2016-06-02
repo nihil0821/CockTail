@@ -17,7 +17,7 @@
             android:id="@+id/custom_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            sl:scale_base_height="1900"
+            sl:scale_base_height="1750"
             sl:scale_base_width="1000">
 
             <TextView
@@ -36,7 +36,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="@drawable/round_corner"
-                sl:scale_height="1650"
+                sl:scale_height="1300"
                 sl:scale_left="10"
                 sl:scale_top="120"
                 sl:scale_width="980">
@@ -56,6 +56,8 @@
                 android:id="@+id/custom_seek"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:progressTint="@color/colorPrimary"
+                android:thumbTint="@color/colorPrimary"
                 sl:scale_height="100"
                 sl:scale_left="150"
                 sl:scale_top="133"
@@ -177,7 +179,7 @@
                 android:src="@drawable/ic_phone_in_talk_black_24dp"
                 sl:scale_height="100"
                 sl:scale_left="0"
-                sl:scale_top="1078"
+                sl:scale_top="891"
                 sl:scale_width="180"/>
 
             <TextView
@@ -189,16 +191,18 @@
                 sl:scale_height="90"
                 sl:scale_left="170"
                 sl:scale_textsize="50"
-                sl:scale_top="1090"
+                sl:scale_top="905"
                 sl:scale_width="150" />
 
             <SeekBar
                 android:id="@+id/ringSeekBar"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:progressTint="@color/colorPrimary"
+                android:thumbTint="@color/colorPrimary"
                 sl:scale_height="100"
                 sl:scale_left="300"
-                sl:scale_top="1078"
+                sl:scale_top="889"
                 sl:scale_width="650" />
 
             <ImageView
@@ -207,7 +211,7 @@
                 android:src="@drawable/ic_volume_up_black_24dp"
                 sl:scale_height="100"
                 sl:scale_left="0"
-                sl:scale_top="1265"
+                sl:scale_top="1078"
                 sl:scale_width="180"/>
 
             <TextView
@@ -219,16 +223,18 @@
                 sl:scale_height="90"
                 sl:scale_left="170"
                 sl:scale_textsize="50"
-                sl:scale_top="1277"
+                sl:scale_top="1092"
                 sl:scale_width="150"/>
 
             <SeekBar
                 android:id="@+id/mediaSeekBar"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:progressTint="@color/colorPrimary"
+                android:thumbTint="@color/colorPrimary"
                 sl:scale_height="100"
                 sl:scale_left="300"
-                sl:scale_top="1265"
+                sl:scale_top="1080"
                 sl:scale_width="650"/>
 
             <ImageView
@@ -237,7 +243,7 @@
                 android:src="@drawable/ic_error_black_24dp"
                 sl:scale_height="100"
                 sl:scale_left="0"
-                sl:scale_top="1452"
+                sl:scale_top="1265"
                 sl:scale_width="180"/>
 
             <TextView
@@ -249,16 +255,18 @@
                 sl:scale_height="90"
                 sl:scale_left="170"
                 sl:scale_textsize="50"
-                sl:scale_top="1464"
+                sl:scale_top="1285"
                 sl:scale_width="150"/>
 
             <SeekBar
                 android:id="@+id/alertSeekBar"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:progressTint="@color/colorPrimary"
+                android:thumbTint="@color/colorPrimary"
                 sl:scale_height="100"
                 sl:scale_left="300"
-                sl:scale_top="1452"
+                sl:scale_top="1279"
                 sl:scale_width="650"/>
 
             <ImageView
@@ -291,9 +299,18 @@
                 sl:scale_top="1639"
                 sl:scale_width="650"/>
 
+            <Button
+                android:id="@+id/returnBtn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="초기화"
+                sl:scale_textsize="50"
+                sl:scale_height="130"
+                sl:scale_left="350"
+                sl:scale_top="1480"
+                sl:scale_width="300">
 
-
-
+            </Button>
         </com.ssomai.android.scalablelayout.ScalableLayout>
     </ScrollView>
 </RelativeLayout>

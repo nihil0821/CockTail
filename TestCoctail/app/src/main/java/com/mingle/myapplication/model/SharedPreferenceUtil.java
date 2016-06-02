@@ -47,6 +47,6 @@ public class SharedPreferenceUtil {
     }
     public static String getSharedPreference(Context context, String key, String v) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-        return prefs.getString(key,null);
+        return prefs.getString(key,"KIM_NOH_JEON");
     }
 }

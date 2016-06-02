@@ -36,7 +36,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="@drawable/round_corner"
-                sl:scale_height="1650"
+                sl:scale_height="1460"
                 sl:scale_left="10"
                 sl:scale_top="120"
                 sl:scale_width="980">
@@ -56,6 +56,8 @@
                 android:id="@+id/custom_seek"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:progressTint="@color/colorPrimary"
+                android:thumbTint="@color/colorPrimary"
                 sl:scale_height="100"
                 sl:scale_left="150"
                 sl:scale_top="133"
@@ -225,6 +227,8 @@
                 android:id="@+id/ringSeekBar"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:progressTint="@color/colorPrimary"
+                android:thumbTint="@color/colorPrimary"
                 sl:scale_height="100"
                 sl:scale_left="300"
                 sl:scale_top="1078"
@@ -255,6 +259,8 @@
                 android:id="@+id/mediaSeekBar"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:progressTint="@color/colorPrimary"
+                android:thumbTint="@color/colorPrimary"
                 sl:scale_height="100"
                 sl:scale_left="300"
                 sl:scale_top="1265"
@@ -285,40 +291,24 @@
                 android:id="@+id/alertSeekBar"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:progressTint="@color/colorPrimary"
+                android:thumbTint="@color/colorPrimary"
                 sl:scale_height="100"
                 sl:scale_left="300"
                 sl:scale_top="1452"
                 sl:scale_width="650"/>
 
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:src="@drawable/ic_info_black_24dp"
-                sl:scale_height="100"
-                sl:scale_left="0"
-                sl:scale_top="1639"
-                sl:scale_width="180"/>
-
-            <TextView
+            <Button
+                android:id="@+id/returnBtn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="시스템"
-                android:textAppearance="?android:attr/textAppearanceLarge"
-                android:textColor="@color/black"
-                sl:scale_height="90"
-                sl:scale_left="170"
+                android:text="초기화"
                 sl:scale_textsize="50"
-                sl:scale_top="1651"
-                sl:scale_width="150"/>
-
-            <SeekBar
-                android:id="@+id/sysSeekBar"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                sl:scale_height="100"
-                sl:scale_left="300"
-                sl:scale_top="1639"
-                sl:scale_width="650"/>
+                sl:scale_height="130"
+                sl:scale_left="350"
+                sl:scale_top="1640"
+                sl:scale_width="300">
+            </Button>
 
 
 

@@ -20,7 +20,6 @@ import android.renderscript.Element;
 import android.renderscript.RenderScript;
 import android.renderscript.ScriptIntrinsicBlur;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -33,14 +32,12 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.Button;
 
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 
 import android.widget.Toast;
 import android.widget.ToggleButton;
-
 
 import com.mingle.myapplication.DialogCall;
 import com.mingle.myapplication.R;
@@ -79,9 +76,6 @@ public class MainActivity extends AppCompatActivity
     private SweetSheet mSweetSheet3;
     private RelativeLayout rl;
     ToggleButton bottomToggleButton;
-    Button cinemaButton;
-    Button libraryButton;
-    Button exhibitButton;
     Toolbar toolbar;
     Toolbar bottombar;
     Handler handler;
@@ -99,92 +93,20 @@ public class MainActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        showDialog(); //닉네임 입력 팝업창 불러오기. UserNickname 입력후 SharedPreference에 저장.
-
         servercall=new Servercall();
         servercall.customizeset(getApplicationContext()); //서버에서 디폴트값 얻어오기 . SharedPreference에 값 저장
-
         audioManager = (AudioManager) getBaseContext().getSystemService(Context.AUDIO_SERVICE);
-
         m_checkPermission();
 
         try {
             SharedPreferenceUtil.putSharedPreference(getApplicationContext(), "PresentBrightness", Settings.System.getInt(getContentResolver(), Settings.System.SCREEN_BRIGHTNESS));
             SharedPreferenceUtil.putSharedPreference(getApplicationContext(), "PresentMode", audioManager.getRingerMode());
+            Log.d("KNJ,C,PreMode: ", ""+audioManager.getRingerMode());
 
         } catch (Exception e) {
             e.printStackTrace();
         }
-        /*
 
-        Intent monitorService = new Intent(this, RECOBackgroundRangingService.class);
-        startService(monitorService);
-        cinemaButton=(Button)findViewById(R.id.cinema_h_icon);
-        libraryButton=(Button)findViewById(R.id.library_h_icon);
-        exhibitButton=(Button)findViewById(R.id.exhibition_h_icon);
-        cinemaButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent cinema = new Intent(getApplicationContext(), ResionCinemaActivity.class);
-                cinema.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                startActivity(cinema);
-            }
-        });
-        libraryButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent library = new Intent(getApplicationContext(), RegionLibraryActivity.class);
-                library.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                startActivity(library);
-            }
-        });
-        exhibitButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent exhibition = new Intent(getApplicationContext(), ResionExhibitionActivity.class);
-                exhibition.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                startActivity(exhibition);
-
-            }
-        });
-        rl = (RelativeLayout) findViewById(R.id.rl);
-        setupCustomView();
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        //noinspection ConstantConditions
-        getSupportActionBar().setDisplayShowCustomEnabled(true);
-        getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
-        getSupportActionBar().setCustomView(getLayoutInflater().inflate(R.layout.actionbar_layout, null),
-                new ActionBar.LayoutParams(
-                        ActionBar.LayoutParams.WRAP_CONTENT,
-                        ActionBar.LayoutParams.MATCH_PARENT,
-                        Gravity.CENTER
-                )
-        );
-        bottombar = (Toolbar) findViewById(R.id.bottombar);
-        setSupportActionBar(bottombar);
-        getSupportActionBar().setDisplayShowCustomEnabled(true);
-        getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
-        getSupportActionBar().setCustomView(getLayoutInflater().inflate(R.layout.bottombar_layout, null),
-                new ActionBar.LayoutParams(
-                        ActionBar.LayoutParams.WRAP_CONTENT,
-                        ActionBar.LayoutParams.MATCH_PARENT,
-                        Gravity.CENTER
-                )
-        );
-        bottomToggleButton = (ToggleButton) findViewById(R.id.bottomToggleButton);
-        bottomToggleButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (bottomToggleButton.isChecked()) {
-                    mSweetSheet3.show();
-                } else {
-                    mSweetSheet3.dismiss();
-                }
-            }
-        });
-        */
         list = new ArrayList<Resion>();
         adapter = new MainListAdapter(this, R.layout.layout_main_list, list);
         listView = (ListView) findViewById(R.id.mainListView);
@@ -208,15 +130,18 @@ public class MainActivity extends AppCompatActivity
                         exhibition.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                         startActivity(exhibition);
                         break;
-
-                    default:break;
+                    case 3:
+                        showDialog();
+                        break;
+                    default:
+                        break;
                 }
             }
         });
         addData();
         SharedPreferenceUtil.putSharedPreference(getApplicationContext(), "ISRESIONSET", 0);
-        Intent monitorService = new Intent(this, RECOBackgroundRangingService.class);
-        startService(monitorService);
+        Intent RangingService = new Intent(this, RECOBackgroundRangingService.class);
+        startService(RangingService); //Ranging Service 시작
         rl = (RelativeLayout) findViewById(R.id.rl);
         setupCustomView();
         toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -235,40 +160,36 @@ public class MainActivity extends AppCompatActivity
         setSupportActionBar(bottombar);
         getSupportActionBar().setDisplayShowCustomEnabled(true);
         getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
-        getSupportActionBar().setCustomView(getLayoutInflater().inflate(R.layout.bottombar_layout, null),
+        getSupportActionBar().setCustomView(getLayoutInflater().inflate(R.layout.layout_bottom_main, null),
                 new ActionBar.LayoutParams(
                         ActionBar.LayoutParams.WRAP_CONTENT,
                         ActionBar.LayoutParams.MATCH_PARENT,
                         Gravity.CENTER
                 )
         );
-        bottomToggleButton = (ToggleButton) findViewById(R.id.bottomToggleButton);
-        bottomToggleButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (bottomToggleButton.isChecked()) {
-                    mSweetSheet3.show();
-                } else {
-                    mSweetSheet3.dismiss();
-                }
-            }
-        });
         SharedPreferenceUtil.putSharedPreference(getApplicationContext(), "ResionMajor", 0);
-        SharedPreferenceUtil.putSharedPreference(getApplicationContext(), "CallServiceFrag", 0); // 다른 지역에서 callservice 사용 안함
+        SharedPreferenceUtil.putSharedPreference(getApplicationContext(), "CallServiceFrag", 1); // 다른 지역에서 callservice 사용 안함
+        if(SharedPreferenceUtil.getSharedPreference(getApplicationContext(), "FirstIn") == 0)
+            showDialog(); //닉네임 입력 팝업창 불러오기. UserNickname 입력후 SharedPreference에 저장.
     }
     public void addData() {
         Bitmap bitmapCin = BitmapFactory.decodeResource(getResources(), R.drawable.cinema);
         Bitmap bitmapLib = BitmapFactory.decodeResource(getResources(), R.drawable.library);
         Bitmap bitmapExh = BitmapFactory.decodeResource(getResources(), R.drawable.exhibition);
+        Bitmap bitmaphom = BitmapFactory.decodeResource(getResources(), R.drawable.home_back);
         Bitmap blurCin=blur(bitmapCin);
         Bitmap blurLib=blur(bitmapLib);
         Bitmap blurExh=blur(bitmapExh);
+        Bitmap blurHom=blur(bitmaphom);
         BitmapDrawable blurDrawCin=new BitmapDrawable(getResources(), blurCin);
         BitmapDrawable blurDrawLib=new BitmapDrawable(getResources(), blurLib);
         BitmapDrawable blurDrawExh=new BitmapDrawable(getResources(), blurExh);
+        BitmapDrawable blurDrawHom=new BitmapDrawable(getResources(), blurHom);
         adapter.add(new Resion(R.mipmap.ic_cinema, blurDrawCin, "영화관"));
         adapter.add(new Resion(R.mipmap.ic_library, blurDrawLib, "도서관"));
         adapter.add(new Resion(R.mipmap.ic_exhibition, blurDrawExh, "전시장"));
+        adapter.add(new Resion(R.mipmap.ic_home, blurDrawHom, "별명짓기"));
+
     }
 
     public Bitmap blur(Bitmap image) {
@@ -361,22 +282,21 @@ public class MainActivity extends AppCompatActivity
                 break;
         }
     }
-
     @Override
     protected void onStart() {
         super.onStart();
     }
 
     private void updateThread() {
-
         if(selectBeaconMajor !=
                 SharedPreferenceUtil.getSharedPreference(getApplicationContext(), "ResionMajor")) {
             difResionNum++;
             if (difResionNum == 3) {
                 difResionNum = 0;
                 selectBeaconMajor = SharedPreferenceUtil.getSharedPreference(getApplicationContext(), "ResionMajor");
-                if (SharedPreferenceUtil.getSharedPreference(this, "ResionMajor") == 18243) { // 초록색
+                if (SharedPreferenceUtil.getSharedPreference(this, "ResionMajor") == 18243) { // 초록색 영화관
                     Intent intent = new Intent(getApplicationContext(), ResionCinemaActivity.class);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                     startActivity(intent);
                     //moveTaskToBack(SharedPreferenceUtil.isResionSet);
                     SharedPreferenceUtil.putSharedPreference(getApplicationContext(), "ISRESIONSET", 0);
@@ -384,31 +304,42 @@ public class MainActivity extends AppCompatActivity
                     //intent3.setAction(Intent.ACTION_MAIN);
                     //intent3.addCategory(Intent.CATEGORY_HOME);
                     //startActivity(intent3);
-
+                    Settings.System.putInt(getContentResolver(), "screen_brightness",
+                            SharedPreferenceUtil.getSharedPreference(getApplicationContext(), "CinemaBrightness"));
+                    audioManager.setRingerMode(
+                            SharedPreferenceUtil.getSharedPreference(getApplicationContext(), "CinemaRingerMode"));
+                    Log.d("KNJ,U,CinMode", "" + SharedPreferenceUtil.getSharedPreference(getApplicationContext(), "CinemaRingerMode"));
+                    Log.d("KNJ,U,CinBrightness", "" + SharedPreferenceUtil.getSharedPreference(getApplicationContext(), "CinemaBrightness"));
                     isExitResion = true;
-                } else if (SharedPreferenceUtil.getSharedPreference(this, "ResionMajor") == 18249) { // 노란색
+
+                } else if (SharedPreferenceUtil.getSharedPreference(this, "ResionMajor") == 18249) { // 노란색 전시관
                     audioManager.setRingerMode(
                             SharedPreferenceUtil.getSharedPreference(getApplicationContext(), "ExhibitionRingerMode"));
                     Intent intent = new Intent(getApplicationContext(), ResionExhibitionActivity.class);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                     startActivity(intent);
                     //moveTaskToBack(SharedPreferenceUtil.isResionSet);
                     SharedPreferenceUtil.putSharedPreference(getApplicationContext(), "ISRESIONSET", 0);
-                    //Intent intent3 = new Intent();
-                    //intent3.setAction(Intent.ACTION_MAIN);
-                    //intent3.addCategory(Intent.CATEGORY_HOME);
-                    //startActivity(intent3);
-
+                    Settings.System.putInt(getContentResolver(), "screen_brightness",
+                            SharedPreferenceUtil.getSharedPreference(getApplicationContext(), "ExhibitionBrightness"));
+                    audioManager.setRingerMode(
+                            SharedPreferenceUtil.getSharedPreference(getApplicationContext(), "ExhibitionRingerMode"));
+                    Log.d("KNJ,U,ExhMode", "" + SharedPreferenceUtil.getSharedPreference(getApplicationContext(), "ExhibitionRingerMode"));
+                    Log.d("KNJ,U,ExhBrightness", "" + SharedPreferenceUtil.getSharedPreference(getApplicationContext(), "ExhibitionBrightness"));
                     isExitResion = true;
+
+
                 } else if (SharedPreferenceUtil.getSharedPreference(this, "ResionMajor") == 0) {
                     if (isExitResion) {
                         Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                         intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                        startActivity(intent);
                         Settings.System.putInt(getContentResolver(), "screen_brightness",
                                 SharedPreferenceUtil.getSharedPreference(getApplicationContext(), "PresentBrightness"));
                         audioManager.setRingerMode(
                                 SharedPreferenceUtil.getSharedPreference(getApplicationContext(), "PresentMode"));
-                        Toast.makeText(this, "MainResume", Toast.LENGTH_SHORT).show();
-                        startActivity(intent);
+                        Log.d("KNJ,U,PreMode", "" + SharedPreferenceUtil.getSharedPreference(getApplicationContext(), "PresentMode"));
+                        Log.d("KNJ,U,PreBrightness", ""+ SharedPreferenceUtil.getSharedPreference(getApplicationContext(), "PresentBrightness"));
                         isExitResion = false;
                     }
                 } else {
@@ -434,10 +365,30 @@ public class MainActivity extends AppCompatActivity
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
     }
+
     @Override
     protected void onResume() {
         super.onResume();
-        SharedPreferenceUtil.putSharedPreference(getApplicationContext(), "CallServiceFrag", 0);
+        Toast.makeText(this, "MainResume", Toast.LENGTH_SHORT).show();
+        SharedPreferenceUtil.putSharedPreference(getApplicationContext(), "CallServiceFrag", 1);
+        Settings.System.putInt(getContentResolver(), "screen_brightness",
+                SharedPreferenceUtil.getSharedPreference(getApplicationContext(), "PresentBrightness"));
+        audioManager.setRingerMode(
+                SharedPreferenceUtil.getSharedPreference(getApplicationContext(), "PresentMode"));
+        Log.d("KNJ,R,PreMode: ", "" + SharedPreferenceUtil.getSharedPreference(getApplicationContext(), "PresentMode"));
+        Log.d("KNJ,R,PreBrightness: ", "" + SharedPreferenceUtil.getSharedPreference(getApplicationContext(), "PresentBrightness"));
+
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        SharedPreferenceUtil.putSharedPreference(getApplicationContext(), "CallServiceFrag", 1);
+        Settings.System.putInt(getContentResolver(), "screen_brightness",
+                SharedPreferenceUtil.getSharedPreference(getApplicationContext(), "PresentBrightness"));
+        audioManager.setRingerMode(
+                SharedPreferenceUtil.getSharedPreference(getApplicationContext(), "PresentMode"));
+
     }
 
     private void setupCustomView() {
@@ -447,15 +398,6 @@ public class MainActivity extends AppCompatActivity
         View view = LayoutInflater.from(this).inflate(R.layout.layout_custom_view, null, false);
         customDelegate.setCustomView(view);
         mSweetSheet3.setDelegate(customDelegate);
-        /*view.findViewById(R.id.intro_btn).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(), IntroActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
-                startActivity(intent);
-                finish();
-            }
-        });*/
     }
 
     @Override

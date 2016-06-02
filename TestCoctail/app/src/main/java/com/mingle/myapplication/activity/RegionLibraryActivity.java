@@ -1,4 +1,5 @@
 package com.mingle.myapplication.activity;
+
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -20,6 +21,7 @@ import android.widget.RelativeLayout;
 import android.widget.ToggleButton;
 
 import com.mingle.entity.MenuEntity;
+import com.mingle.myapplication.MessageDialog;
 import com.mingle.myapplication.R;
 import com.mingle.myapplication.WebDialog;
 import com.mingle.myapplication.model.SharedPreferenceUtil;
@@ -32,9 +34,8 @@ import com.mingle.sweetpick.SweetSheet;
 import com.mingle.sweetpick.ViewPagerDelegate;
 
 import java.util.ArrayList;
+
 public class RegionLibraryActivity extends AppCompatActivity {
-    private SweetSheet mSweetSheet;
-    private SweetSheet mSweetSheet2;
     private SweetSheet mSweetSheet3;
     private RelativeLayout rl;
     Toolbar toolbar;
@@ -117,8 +118,6 @@ public class RegionLibraryActivity extends AppCompatActivity {
         });
 
         rl = (RelativeLayout) findViewById(R.id.rl);
-        //setupViewpager();
-        //setupRecyclerView();
         setupCustomView();
 
         toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -157,7 +156,15 @@ public class RegionLibraryActivity extends AppCompatActivity {
             }
         });
 
-        SharedPreferenceUtil.putSharedPreference(getApplicationContext(), "CallServiceFrag", 0); // 다른 지역에서 callservice 사용 안함
+        SharedPreferenceUtil.putSharedPreference(getApplicationContext(), "CallServiceFrag", 1); // 다른 지역에서 callservice 사용 안함
+
+        android.support.design.widget.FloatingActionButton fab = (android.support.design.widget.FloatingActionButton) findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                messageDialog();
+            }
+        });
     }
 
     protected void onNewIntent(Intent intent) {
@@ -182,6 +189,13 @@ public class RegionLibraryActivity extends AppCompatActivity {
         bitmap3.recycle();
     }
 
+    public void messageDialog() {
+        MessageDialog messgeDialog = new MessageDialog();
+        messgeDialog.show(getFragmentManager(), "UserContext");
+        SharedPreferenceUtil.putSharedPreference(getApplicationContext(), "SectorId", library);
+        messgeDialog.setCancelable(true);
+    }
+
     private void setupCustomView() {
         mSweetSheet3 = new SweetSheet(rl);
         CustomDelegate customDelegate = new CustomDelegate(true,
@@ -194,67 +208,7 @@ public class RegionLibraryActivity extends AppCompatActivity {
         mSweetSheet3.setBackgroundClickEnable(false);
     }
 
-    private void setupRecyclerView() {
 
-        final ArrayList<MenuEntity> list = new ArrayList<>();
-
-        MenuEntity menuEntity1 = new MenuEntity();
-        menuEntity1.iconId = R.drawable.ic_account_child;
-        menuEntity1.titleColor = 0xff96CC7A; //textcolor
-        menuEntity1.title = "code";
-        MenuEntity menuEntity = new MenuEntity();
-        menuEntity.iconId = R.drawable.ic_account_child;
-        menuEntity.titleColor = 0xffb3b3b3;
-        menuEntity.title = "QQ";
-        list.add(menuEntity1);
-        list.add(menuEntity);
-
-
-        // SweetSheet 控件,根据 rl 确认位置
-        mSweetSheet = new SweetSheet(rl);
-
-        //设置数据源 (数据源支持设置 list 数组,也支持从菜单中获取)
-        mSweetSheet.setMenuList(list);
-        //根据设置不同的 Delegate 来显示不同的风格.
-        mSweetSheet.setDelegate(new RecyclerViewDelegate(true));
-        //根据设置不同Effect 来显示背景效果BlurEffect:模糊效果.DimEffect 变暗效果
-        mSweetSheet.setBackgroundEffect(new BlurEffect(8));
-        //设置点击事件
-        mSweetSheet.setOnMenuItemClickListener(new SweetSheet.OnMenuItemClickListener() {
-            @Override
-            public boolean onItemClick(int position, MenuEntity menuEntity1) {
-                //即时改变当前项的颜色
-                list.get(position).titleColor = 0xff96CC7A;
-                ((RecyclerViewDelegate) mSweetSheet.getDelegate()).notifyDataSetChanged();
-
-                //根据返回值, true 会关闭 SweetSheet ,false 则不会.
-                //Toast.makeText(MainActivity.this, menuEntity1.title + "  " + position, Toast.LENGTH_SHORT).show();
-                return false;
-            }
-        });
-
-    }
-
-    private void setupViewpager() {
-
-
-        mSweetSheet2 = new SweetSheet(rl);
-
-        //从menu 中设置数据源
-        mSweetSheet2.setMenuList(R.menu.menu_sweet);
-        mSweetSheet2.setDelegate(new ViewPagerDelegate());
-        mSweetSheet2.setBackgroundEffect(new DimEffect(0.5f));
-        mSweetSheet2.setOnMenuItemClickListener(new SweetSheet.OnMenuItemClickListener() {
-            @Override
-            public boolean onItemClick(int position, MenuEntity menuEntity1) {
-
-                //  Toast.makeText(MainActivity.this, menuEntity1.title + "  " + position, Toast.LENGTH_SHORT).show();
-                return true;
-            }
-        });
-
-
-    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

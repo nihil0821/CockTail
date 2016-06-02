@@ -34,7 +34,7 @@ import java.util.Locale;
 public class RECOBackgroundRangingService extends Service implements RECOMonitoringListener, RECORangingListener, RECOServiceConnectListener {
 	private long mScanDuration = 1*1000L;
 	private long mSleepDuration = 1*1000L;
-	private long mRegionExpirationTime = 1*1000L;
+	private long mRegionExpirationTime = 1*3000L;
 	private int mNotificationID = 9999;
 	private int mNotificationID2 = 0;
 	
@@ -231,6 +231,7 @@ public class RECOBackgroundRangingService extends Service implements RECOMonitor
 	public void didStartMonitoringForRegion(RECOBeaconRegion region) {
 		//Log.i("RECOBackgroundRangingService", "didStartMonitoringForRegion() - " + region.getUniqueIdentifier());
 		//Write the code when starting monitoring the region is started successfully
+		this.startRangingWithRegion(region);
 	}
 
 	@Override

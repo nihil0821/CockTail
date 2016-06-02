@@ -78,6 +78,21 @@ public class TriToggleButton extends Button {
         }
     }
 
+    public void setButtonText2(int state) {
+        //TODO
+        switch(state)
+        {
+            case 0:  ResionExhibitionActivity.state = 0; this.setBackgroundResource(R.drawable.ic_volume_off_black_24dp);
+                break;
+            case 1:  ResionExhibitionActivity.state = 1; this.setBackgroundResource(R.drawable.ic_vibration_24dp);
+                break;
+            case 2:  ResionExhibitionActivity.state = 2; this.setBackgroundResource(R.drawable.ic_volume_up_black_24dp);
+                break;
+            default: this.setText("N/A"); // Should never happen, but just in case
+                break;
+        }
+    }
+
     public static int getState() {
         return _state;
     }

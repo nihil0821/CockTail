@@ -19,12 +19,13 @@ public class WebDialog extends Activity implements View.OnClickListener {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_BLUR_BEHIND, WindowManager.LayoutParams.FLAG_BLUR_BEHIND);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND, WindowManager.LayoutParams.FLAG_DIM_BEHIND );
         setContentView(R.layout.webpop);
         webView = (WebView) findViewById(R.id.webpop);
         webView.setWebViewClient(new MyWebView());
         WebSettings webSettings = webView.getSettings();
         webSettings.setJavaScriptEnabled(true);
+        webSettings.setBuiltInZoomControls(true);
         webView.loadUrl("http://220.67.224.205/domianweb/domian5.asp");
     }
 
