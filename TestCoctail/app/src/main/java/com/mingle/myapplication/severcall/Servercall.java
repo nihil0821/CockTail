@@ -17,7 +17,7 @@ public class Servercall extends AppCompatActivity {
     Gson gson;
     Result result;
     AsyncHttpClient client = new AsyncHttpClient();
-    private static final String server_url = "http://113.198.84.107:8080/cocktail";
+    private static final String server_url = "http://223.194.158.101:8080/cocktail";
     Context context;
 
     public void postResioninfo(Context context, String id){
